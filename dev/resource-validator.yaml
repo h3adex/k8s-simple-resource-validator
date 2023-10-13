@@ -1,0 +1,19 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: k8s-simple-resource-validator
+webhooks:
+  - name: k8s-simple-resource-validator.default.svc
+    clientConfig:
+      service:
+        namespace: default
+        name: k8s-simple-resource-validator
+        path: "/validate"
+      caBundle: ${ENCODED_CA}
+    rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["pods"]
+    admissionReviewVersions: ["v1"]
+    sideEffects: "None"

@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: k8s-simple-resource-validator
+  name: k8s-simple-resource-validator
+spec:
+  volumes:
+    - name: tls-certs
+      secret:
+        secretName: k8s-simple-resource-validator-tls
+  containers:
+    - image: k8s-simple-resource-validator:1.0.0-dev
+      name: k8s-simple-resource-validator
+      ports:
+        - containerPort: 8080
+      volumeMounts:
+        - name: tls-certs
+          mountPath: /etc/ssl/certs
+          readOnly: true
+      resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8s-simple-resource-validator
+spec:
+  selector:
+    run: k8s-simple-resource-validator
+  ports:
+    - port: 443
+      targetPort: 8080
